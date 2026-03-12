@@ -1,1 +1,67 @@
-<title>Cows and Bulls Game</title> <style> body { margin: 0; font-family: 'Segoe UI', sans-serif; background: linear-gradient(to right, #f5f7fa, #c3cfe2); text-align: center; padding: 30px; } h1 { font-size: 2.5em; color: #2c3e50; } .images { margin: 20px; } .images img { width: 120px; margin: 0 15px; } input { font-size: 20px; padding: 10px; width: 150px; margin: 10px; border-radius: 6px; } button { font-size: 20px; padding: 10px 20px; margin: 10px; border-radius: 6px; background: #27ae60; color: white; border: none; cursor: pointer; } button:hover { background: #219150; } .history { margin-top: 30px; max-width: 500px; margin-left: auto; margin-right: auto; text-align: left; } .entry { background: #ecf0f1; padding: 10px; border-radius: 5px; margin-bottom: 8px; border-left: 5px solid #3498db; } </style> images not showing right and background not working can we update
+<script>
+
+let secret = Math.floor(1000 + Math.random() * 9000).toString();
+let historyDiv = document.getElementById("history");
+
+let tries = 0;
+let maxTries = 7;
+let gameOver = false;
+
+function checkGuess(){
+
+if(gameOver) return;
+
+let guess = document.getElementById("guess").value;
+
+if(guess.length !== 4){
+alert("Enter a 4 digit number");
+return;
+}
+
+tries++;
+
+let bulls = 0;
+let cows = 0;
+
+for(let i=0;i<4;i++){
+
+if(guess[i] === secret[i]){
+bulls++;
+}
+else if(secret.includes(guess[i])){
+cows++;
+}
+
+}
+
+let entry = document.createElement("div");
+entry.className = "entry";
+entry.innerText = `Try ${tries}: ${guess} | Bulls: ${bulls} | Cows: ${cows}`;
+historyDiv.prepend(entry);
+
+
+if(bulls === 4){
+alert("🎉 You guessed it!");
+gameOver = true;
+return;
+}
+
+if(tries === maxTries){
+alert("❌ Game Over! The number was " + secret);
+gameOver = true;
+}
+
+}
+
+function restartGame(){
+
+secret = Math.floor(1000 + Math.random() * 9000).toString();
+tries = 0;
+gameOver = false;
+
+historyDiv.innerHTML = "";
+document.getElementById("guess").value = "";
+
+}
+
+</script>
