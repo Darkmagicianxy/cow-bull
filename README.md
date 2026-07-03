@@ -30,9 +30,15 @@ h1{
     color:#2c3e50;
 }
 
-.images img{
-    width:70px;
-    margin:5px;
+.images{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    margin-bottom:10px;
+}
+
+.images span{
+    font-size:70px;
 }
 
 input{
@@ -91,8 +97,8 @@ button:hover{
     <h1>Cows & Bulls</h1>
 
     <div class="images">
-        <img src="https://cdn-icons-png.flaticon.com/512/1998/1998610.png" alt="Cow">
-        <img src="https://cdn-icons-png.flaticon.com/512/3069/3069172.png" alt="Bull">
+        <span>🐄</span>
+        <span>🐂</span>
     </div>
 
     <p>Guess the 4-digit number</p>
@@ -103,42 +109,3 @@ button:hover{
 
     <br>
 
-    <button onclick="checkGuess()">Guess</button>
-    <button onclick="restartGame()">Restart</button>
-
-    <div class="history" id="history"></div>
-
-</div>
-
-<script>
-
-let secret = generateNumber();
-let tries = 0;
-let maxTries = 7;
-let gameOver = false;
-
-function generateNumber(){
-    return Math.floor(1000 + Math.random()*9000).toString();
-}
-
-function checkGuess(){
-
-    if(gameOver) return;
-
-    let guess = document.getElementById("guess").value;
-
-    if(guess.length !== 4){
-        alert("Enter a 4 digit number");
-        return;
-    }
-
-    tries++;
-
-    let bulls = 0;
-    let cows = 0;
-
-    for(let i=0;i<4;i++){
-
-        if(guess[i] === secret[i]){
-            bulls++;
-        }
