@@ -5,7 +5,6 @@
 <title>Cows and Bulls Game</title>
 
 <style>
-
 body{
     margin:0;
     font-family:'Segoe UI',sans-serif;
@@ -86,14 +85,12 @@ button:hover{
     font-weight:bold;
     color:#555;
 }
-
 </style>
 </head>
 
 <body>
 
 <div class="game-card">
-
     <h1>Cows & Bulls</h1>
 
     <div class="images">
@@ -102,10 +99,123 @@ button:hover{
     </div>
 
     <p>Guess the 4-digit number</p>
-
     <p id="tries">Tries left: 7</p>
 
     <input id="guess" maxlength="4" placeholder="1234">
-
     <br>
+    
+    <button id="submitBtn">Submit Guess</button>
+    <button id="restartBtn" style="background:#e74c3c; display:none;">Play Again</button>
 
+    <div class="history" id="historyLog"></div>
+</div>
+
+<script>
+    let secretCode = "";
+    let maxTries = 7;
+    let triesLeft = maxTries;
+
+    const guessInput = document.getElementById("guess");
+    const submitBtn = document.getElementById("submitBtn");
+    const restartBtn = document.getElementById("restartBtn");
+    const triesDisplay = document.getElementById("tries");
+    const historyLog = document.getElementById("historyLog");
+
+    // Generate a random 4-digit code with unique digits
+    function generateSecretCode() {
+        let digits = [];
+        while (digits.length < 4) {
+            let r = Math.floor(Math.random() * 10).toString();
+            if (!digits.includes(r)) {
+                digits.push(r);
+            }
+        }
+        return digits.join("");
+    }
+
+    // Initialize/Restart Game
+    function initGame() {
+        secretCode = generateSecretCode();
+        triesLeft = maxTries;
+        triesDisplay.textContent = `Tries left: ${triesLeft}`;
+        historyLog.innerHTML = "";
+        guessInput.value = "";
+        guessInput.disabled = false;
+        submitBtn.style.display = "inline-block";
+        restartBtn.style.display = "none";
+        // console.log("Secret Code (Cheater!):", secretCode); // Debugging
+    }
+
+    // Handle Guess Submission
+    function checkGuess() {
+        const guess = guessInput.value.trim();
+
+        // Basic validation
+        if (guess.length !== 4 || isNaN(guess)) {
+            alert("Please enter a valid 4-digit number.");
+            return;
+        }
+
+        // Check for unique digits in user guess (standard rules)
+        if (new Set(guess).size !== 4) {
+            alert("All 4 digits must be unique!");
+            return;
+        }
+
+        triesLeft--;
+        triesDisplay.textContent = `Tries left: ${triesLeft}`;
+
+        let bulls = 0; // Right digit, right place
+        let cows = 0;  // Right digit, wrong place
+
+        for (let i = 0; i < 4; i++) {
+            if (guess[i] === secretCode[i]) {
+                bulls++;
+            } else if (secretCode.includes(guess[i])) {
+                cows++;
+            }
+        }
+
+        // Create log entry
+        const entry = document.createElement("div");
+        entry.className = "entry";
+        entry.textContent = `Guess: ${guess} ➔ 🐂 ${bulls} Bulls, 🐄 ${cows} Cows`;
+        historyLog.insertBefore(entry, historyLog.firstChild);
+
+        // Clear input field
+        guessInput.value = "";
+
+        // Check win/loss states
+        if (bulls === 4) {
+            triesDisplay.textContent = "🎉 You Won! Amazing job!";
+            endGame();
+        } else if (triesLeft === 0) {
+            triesDisplay.textContent = `💥 Game Over! The code was ${secretCode}.`;
+            endGame();
+        }
+    }
+
+    function endGame() {
+        guessInput.disabled = true;
+        submitBtn.style.display = "none";
+        restartBtn.style.display = "inline-block";
+    }
+
+    // Event Listeners
+    submitBtn.addEventListener("click", checkGuess);
+    
+    // Also allow submitting by pressing "Enter"
+    guessInput.addEventListener("keyup", function(event) {
+        if (event.key === "Enter" && triesLeft > 0 && !guessInput.disabled) {
+            checkGuess();
+        }
+    });
+
+    restartBtn.addEventListener("click", initGame);
+
+    // Start the game loop on load
+    initGame();
+</script>
+
+</body>
+</html>
